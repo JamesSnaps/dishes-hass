@@ -1,0 +1,27 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Dishes",
+        "description": "Enter your Dishes app URL and an integration token with the `read:meal_plan` scope. Create the token in Dishes under Settings → Integrations.",
+        "data": {
+          "url": "Dishes URL",
+          "token": "Integration Token"
+        },
+        "data_description": {
+          "url": "Base URL of your Dishes app, e.g. https://dishes.home.example.com",
+          "token": "Token with the read:meal_plan scope"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot connect to Dishes. Check the URL and that the app is running.",
+      "invalid_auth": "Invalid or expired token.",
+      "missing_scope": "Token is missing the read:meal_plan scope.",
+      "unknown": "Unexpected error. Check the Home Assistant logs."
+    },
+    "abort": {
+      "already_configured": "This Dishes instance is already configured."
+    }
+  }
+}

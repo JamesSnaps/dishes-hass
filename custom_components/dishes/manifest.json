@@ -1,0 +1,11 @@
+{
+  "domain": "dishes",
+  "name": "Dishes",
+  "version": "1.0.0",
+  "config_flow": true,
+  "documentation": "https://github.com/JamesSnaps/dishes-hass",
+  "issue_tracker": "https://github.com/JamesSnaps/dishes-hass/issues",
+  "iot_class": "local_polling",
+  "requirements": [],
+  "homeassistant": "2023.1.0"
+}
