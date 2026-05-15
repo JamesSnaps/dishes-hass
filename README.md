@@ -1,8 +1,11 @@
-# Dishes — Home Assistant Integration
+# Dishes — Home Assistant Integration & Card
 
-A Home Assistant custom integration for the [Dishes](https://github.com/JamesSnaps/dishes-app) self-hosted meal planning app.
+A Home Assistant custom integration and Lovelace card for the [Dishes](https://github.com/JamesSnaps/dishes-app) self-hosted meal planning app.
 
-Exposes your weekly meal plan as persistent sensors, usable in automations, dashboards, and voice assistants.
+- **Integration** — exposes your weekly meal plan as persistent sensors, usable in automations, dashboards, and voice assistants
+- **Card** — displays the full week's meal grid on any dashboard, with a visual editor
+
+---
 
 ## Sensors
 
@@ -16,24 +19,43 @@ Exposes your weekly meal plan as persistent sensors, usable in automations, dash
 
 Sensors show `None` when no meal is planned for that slot.
 
+---
+
 ## Installation
 
-### Via HACS (recommended)
+### Integration (via HACS — recommended)
 
 1. In HACS, go to **Integrations → ⋮ → Custom repositories**
 2. Add `https://github.com/JamesSnaps/dishes-hass` with category **Integration**
 3. Search for "Dishes" and install
 4. Restart Home Assistant
 
-### Manual
+### Integration (manual)
 
 Copy `custom_components/dishes/` into your HA `config/custom_components/` folder and restart.
 
-## Setup
+### Card (manual)
+
+Copy `www/dishes-week-card.js` into your HA `config/www/` folder, then register it as a Lovelace resource:
+
+```yaml
+lovelace:
+  resources:
+    - url: /local/dishes-week-card.js
+      type: module
+```
+
+Then add a card to your dashboard — search for **Dishes Week Planner** in the card picker and fill in the URL and token via the visual editor.
+
+---
+
+## Integration Setup
 
 1. In HA go to **Settings → Devices & Services → Add Integration** and search for **Dishes**
 2. Enter your Dishes app URL (e.g. `https://dishes.home.example.com`)
 3. Enter an integration token — create one in Dishes under **Settings → Integrations** with the `read:meal_plan` scope
+
+---
 
 ## Example Automations
 
@@ -65,6 +87,8 @@ action:
       a {{ state_attr('sensor.dishes_next_meal', 'meal_type') }}
       on {{ state_attr('sensor.dishes_next_meal', 'day_of_week') }}.
 ```
+
+---
 
 ## Requirements
 
