@@ -177,7 +177,7 @@ class DishesWeekCard extends HTMLElement {
     }
   }
 
-  _buildGrid() {
+  _buildStack() {
     const { entries } = this._data;
     const mealTypes = this._config.meal_types;
 
@@ -190,31 +190,28 @@ class DishesWeekCard extends HTMLElement {
 
     const todayIndex = this._getTodayIndex();
 
-    const rows = mealTypes.map((mealType) => {
-      const cells = DAY_LABELS.map((_, dayIndex) => {
+    const dayRows = DAY_LABELS.map((dayLabel, dayIndex) => {
+      const mealsForDay = mealTypes.flatMap((mealType) => {
         const meals = index[`${dayIndex}:${mealType}`] || [];
-        if (meals.length === 0) return `<td class="cell empty">—</td>`;
-        const items = meals
-          .map((m) => `<span class="recipe-name" title="${m.notes || ""}">${m.recipe.title}</span>`)
-          .join("");
-        return `<td class="cell">${items}</td>`;
+        return meals.map((m) => ({ mealType, recipe: m.recipe, notes: m.notes }));
       });
+      if (mealsForDay.length === 0) return "";
+
+      const isToday = dayIndex === todayIndex;
+      const mealItems = mealsForDay.map((m) => `
+        <div class="meal-row">
+          <span class="meal-type">${MEAL_TYPE_LABELS[m.mealType] || m.mealType}</span>
+          <span class="meal-name" title="${m.notes || ""}">${m.recipe.title}</span>
+        </div>`).join("");
+
       return `
-        <tr>
-          <th class="meal-label">${MEAL_TYPE_LABELS[mealType] || mealType}</th>
-          ${cells.join("")}
-        </tr>`;
-    });
+        <div class="day-block${isToday ? " today" : ""}">
+          <div class="day-name">${dayLabel}</div>
+          <div class="meal-list">${mealItems}</div>
+        </div>`;
+    }).filter(Boolean);
 
-    const dayHeaders = DAY_LABELS.map((label, i) =>
-      `<th class="day-header${i === todayIndex ? " today" : ""}">${label}</th>`
-    ).join("");
-
-    return `
-      <table class="grid">
-        <thead><tr><th class="corner"></th>${dayHeaders}</tr></thead>
-        <tbody>${rows.join("")}</tbody>
-      </table>`;
+    return `<div class="stack">${dayRows.join("")}</div>`;
   }
 
   _getTodayIndex() {
@@ -235,7 +232,7 @@ class DishesWeekCard extends HTMLElement {
     } else if (this._data.entries.length === 0) {
       body = `<div class="state">No meals planned this week.</div>`;
     } else {
-      body = this._buildGrid();
+      body = this._buildStack();
     }
 
     this.shadowRoot.innerHTML = `
@@ -259,29 +256,31 @@ class DishesWeekCard extends HTMLElement {
           padding: 2px 4px; border-radius: 4px; font-size: 0.85rem; line-height: 1;
         }
         .refresh-btn:hover { color: var(--primary-color, #03a9f4); }
-        .grid { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
-        .corner { width: 60px; }
-        .day-header {
-          text-align: center; font-weight: 600;
-          color: var(--secondary-text-color, #727272);
-          padding: 4px 2px; width: calc((100% - 60px) / 7);
-        }
-        .day-header.today { color: var(--primary-color, #03a9f4); }
-        .meal-label {
-          text-align: left; font-weight: 500;
-          color: var(--secondary-text-color, #727272);
-          padding: 5px 4px 5px 0; white-space: nowrap;
-          font-size: 0.72rem; vertical-align: top;
-        }
-        .cell {
-          text-align: center; padding: 4px 3px; vertical-align: top;
+        .stack { display: flex; flex-direction: column; }
+        .day-block {
+          display: flex; align-items: baseline; gap: 12px;
+          padding: 8px 0;
           border-top: 1px solid var(--divider-color, #e8e8e8);
         }
-        .cell.empty { color: var(--disabled-text-color, #bdbdbd); }
-        .recipe-name {
-          display: -webkit-box; color: var(--primary-text-color, #212121);
-          line-height: 1.3; overflow: hidden;
-          -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+        .day-block:first-child { border-top: none; }
+        .day-name {
+          flex: 0 0 36px;
+          font-weight: 600; font-size: 0.8rem;
+          color: var(--secondary-text-color, #727272);
+        }
+        .day-block.today .day-name { color: var(--primary-color, #03a9f4); }
+        .meal-list { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .meal-row { display: flex; align-items: baseline; gap: 8px; }
+        .meal-type {
+          flex: 0 0 60px;
+          font-size: 0.72rem; font-weight: 500;
+          color: var(--secondary-text-color, #727272);
+          text-transform: uppercase; letter-spacing: 0.02em;
+        }
+        .meal-name {
+          font-size: 0.88rem;
+          color: var(--primary-text-color, #212121);
+          line-height: 1.3;
         }
         .state {
           text-align: center; color: var(--secondary-text-color, #727272);
