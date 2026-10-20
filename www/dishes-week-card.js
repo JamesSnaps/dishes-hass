@@ -176,7 +176,8 @@ class DishesWeekCard extends HTMLElement {
   set hass(hass) {
     this._hass = hass;
     const entity = this._config?.entity || weekSensors(hass)[0];
-    const stateObj = entity ? hass.states[entity] : null;
+    // null, never undefined, when missing: undefined means "not drawn yet".
+    const stateObj = (entity && hass.states[entity]) || null;
     // Only redraw when the week sensor itself changed, not on every HA update.
     if (stateObj !== this._stateObj) {
       this._entity = entity;
