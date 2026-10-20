@@ -3,25 +3,91 @@
     "step": {
       "user": {
         "title": "Connect to Dishes",
-        "description": "Enter your Dishes app URL and an integration token with the `read:meal_plan` scope. Create the token in Dishes under Settings → Integrations.",
+        "description": "Enter your Dishes app URL and an integration token. Create the token in Dishes under Settings → Integrations. It needs `read:meal_plan`; add `read:cooking` for who's cooking and timers, and `read:shopping_list` + `write:shopping_list` for the shopping list.",
         "data": {
           "url": "Dishes URL",
-          "token": "Integration Token"
+          "token": "Integration token"
         },
         "data_description": {
           "url": "Base URL of your Dishes app, e.g. https://dishes.home.example.com",
-          "token": "Token with the read:meal_plan scope"
+          "token": "A token with at least the read:meal_plan scope"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Dishes token needed",
+        "description": "Dishes at {url} turned the token down — it was revoked or has expired. Create a new one in Dishes under Settings → Integrations.",
+        "data": {
+          "token": "Integration token"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure Dishes",
+        "description": "Change the Dishes address, or swap in a new token — say, one with more scopes.",
+        "data": {
+          "url": "Dishes URL",
+          "token": "Integration token"
         }
       }
     },
     "error": {
       "cannot_connect": "Cannot connect to Dishes. Check the URL and that the app is running.",
       "invalid_auth": "Invalid or expired token.",
-      "missing_scope": "Token is missing the read:meal_plan scope.",
+      "missing_scope": "The token is missing the read:meal_plan scope.",
       "unknown": "Unexpected error. Check the Home Assistant logs."
     },
     "abort": {
-      "already_configured": "This Dishes instance is already configured."
+      "already_configured": "This Dishes instance is already configured.",
+      "reauth_successful": "Token updated.",
+      "reconfigure_successful": "Dishes reconfigured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Dishes polling",
+        "data": {
+          "scan_interval": "Meal plan refresh",
+          "cooking_interval": "Who's cooking refresh"
+        },
+        "data_description": {
+          "scan_interval": "How often to fetch the meal plan, in minutes. It's also fetched just after midnight.",
+          "cooking_interval": "How often to check who's cooking, in seconds. Timer sensors are exact either way."
+        }
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "cooking": { "name": "Cooking" },
+      "member_cooking": { "name": "{name} cooking" }
+    },
+    "calendar": {
+      "meal_plan": { "name": "Meal plan" }
+    },
+    "sensor": {
+      "next_meal": { "name": "Next meal" },
+      "tonight_dinner": { "name": "Tonight's dinner" },
+      "today_lunch": { "name": "Today's lunch" },
+      "today_breakfast": { "name": "Today's breakfast" },
+      "week_plan": {
+        "name": "Week plan status",
+        "state": {
+          "active": "Active",
+          "draft": "Draft",
+          "archived": "Archived",
+          "none": "No plan"
+        }
+      },
+      "dinner_time": { "name": "Dinner time" },
+      "start_cooking": { "name": "Start cooking" },
+      "next_delivery": { "name": "Next delivery" },
+      "order_deadline": { "name": "Order deadline" },
+      "cook": { "name": "Cook" },
+      "cooking_step": { "name": "Cooking step" },
+      "next_timer": { "name": "Next timer" }
+    },
+    "todo": {
+      "shopping_list": { "name": "Shopping list" }
     }
   }
 }
