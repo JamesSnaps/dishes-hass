@@ -9,7 +9,7 @@
           "token": "Integration token"
         },
         "data_description": {
-          "url": "Base URL of your Dishes app, e.g. https://dishes.home.example.com",
+          "url": "The address you open Dishes at, without a trailing path",
           "token": "A token with at least the read:meal_plan scope"
         }
       },
